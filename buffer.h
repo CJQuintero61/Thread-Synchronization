@@ -1,9 +1,10 @@
 /*
     buffer.h
-    This file is the header file for the buffer module.
 
+    This file is the header file for the buffer module.
     It defines the buffer size, the buffer item type, and the prototypes
     for the buffer functions.
+
     Created by Christian Quintero on 11/03/2025
 */
 
@@ -18,6 +19,7 @@
 #define BUFFER_SIZE 5
 
 // typedef for the buffer item
+// this allows buffer_item to be used in place of an int like a synonym
 typedef int buffer_item;
 
 // prototypes for buffer functions
