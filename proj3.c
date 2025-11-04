@@ -39,7 +39,7 @@ void print_command_line_args(int arg, char *argv[]) {
     int i = 0;
     while(i < arg)
     {
-        printf("%s ", argv[i]);
+        printf("Arg %d: %s\n", i, argv[i]);
         i++;
     } 
 
