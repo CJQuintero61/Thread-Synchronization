@@ -6,13 +6,14 @@
     for the buffer functions.
 
     Created by Christian Quintero on 11/03/2025
+    Last Updated on 11/04/2025
 */
 
 #ifndef BUFFER_H
 #define BUFFER_H
 
 // imports
-#include <stdbool.h>
+#include <stdbool.h>                    // to use the bool data type
 
 // the size of the buffer
 // the buffer can then hold items from 0 to BUFFER_SIZE - 1

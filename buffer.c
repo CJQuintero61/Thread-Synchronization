@@ -5,6 +5,7 @@
     It provides functions to insert and remove items from a buffer.
     
     Created by Christian Quintero on 11/03/2025
+    Last Updated on 11/04/2025
 */
 
 #include "buffer.h"
