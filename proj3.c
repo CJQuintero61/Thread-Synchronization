@@ -26,6 +26,7 @@ void *hello_consumer(void *params);
 pthread_mutex_t mutex;              // define a mutex
 sem_t empty;                        // define an empty semaphore
 sem_t full;                         // define a full semaphore
+sem_t count;                        // define a counting semaphore
 buffer_item buffer[BUFFER_SIZE];    // define the shared buffer 
 
 int main(int argc, char *argv[]) {
