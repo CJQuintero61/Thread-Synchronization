@@ -14,6 +14,7 @@
 #include <unistd.h>                         // for sleep()
 #include <semaphore.h>                      // to use semaphores and mutexes
 #include <pthread.h>                        // to make pthreads
+#include <stdatomic.h>                      // for _Atomic 
 #include "buffer.h"
 
 // prototypes
@@ -21,8 +22,7 @@ void print_command_line_args(int arg, char *argv[]);
 void init_globals();
 void *produce_item(void *params);
 void *consume_item(void *params);
-void *hello_producer(void *params);
-void *hello_consumer(void *params);
+void *do_nothing(void *params);
 
 // global variabes
 pthread_mutex_t mutex;              // define a mutex
@@ -30,6 +30,7 @@ sem_t empty;                        // counts the amount of empty slots
 sem_t full;                         // counts the amount of full slots
 buffer_item buffer[BUFFER_SIZE];    // define the shared buffer 
 bool simulation_flag = true;        // to signal if the simulation is still running or not
+_Atomic int count = 0;              // to index the circular array
 
 int main(int argc, char *argv[]) {
     /*
@@ -62,7 +63,7 @@ int main(int argc, char *argv[]) {
 
     // crete the consumer threads
     for(int i = 0; i < num_consumer_threads; i++) {
-        pthread_create(&consumers[i], &default_attrs, hello_consumer, NULL);
+        pthread_create(&consumers[i], &default_attrs, do_nothing, NULL);
     }
 
     // make the main thread sleep for the simulation duration 
@@ -131,24 +132,6 @@ void init_globals()
 
 } // end init_globals
 
-void *hello_producer(void *params) {
-    /*
-        A simple debugging function
-    */
-    printf("Hello from a producer thread!\n");
-    pthread_exit(0);
-
-} // end hello_producer
-
-void *hello_consumer(void *params) {
-    /*
-        A simple debugging function
-    */
-    printf("Hello from a consumer thread!\n");
-    pthread_exit(0);
-
-} // end hello_consumer
-
 void *produce_item(void *params) {
     /*
         produce_item:
@@ -164,13 +147,10 @@ void *produce_item(void *params) {
         params:
             params: *void - the thread parameters. None
     */
-    
-    // to control the maximum and minimum random values
-    int max = 100;
-    int min = 1;
-
-    // get the thread id
-    pthread_t id = pthread_self();
+    int max = 100;                      // maximum value in the random number range
+    int min = 1;                        // minimum value in the random number range
+    bool success = false;               // the exit status of inserting the item
+    pthread_t id = pthread_self();      // get the thread id
     
     // infite loop for the duration of the 
     // simulation
@@ -178,7 +158,40 @@ void *produce_item(void *params) {
         // produce a random int from [1-100]
         buffer_item item = (rand() % max) + min;
 
-        printf("Producer %ld produces %d\n", id, item);
+        // wait for the empty semaphore
+        sem_wait(&empty);
+
+        // acquire the mutex
+        pthread_mutex_lock(&mutex);
+
+        // place the item in the buffer
+        success = buffer_insert_item(item);
+
+        // increment the count
+        count++;
+
+        if(success) {
+            printf("Producer %ld produces %d\n", id, item);
+        }
+        else {
+            printf("Producer %ld failed to insert %d\n", id, item);
+        }
+
+        // release the mutex lock
+        pthread_mutex_unlock(&mutex);
+
+        // update the full semaphore
+        sem_post(&full);
+
     } while(simulation_flag);
 
+}
+
+
+bool buffer_insert_item(buffer_item item) {
+    buffer[ (count %  BUFFER_SIZE) ] = item;
+}
+
+void *do_nothing(void *params) {
+    ;
 }
