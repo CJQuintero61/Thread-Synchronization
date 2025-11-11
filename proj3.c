@@ -10,7 +10,7 @@
     Last Updated on 11/04/2025
 */
 #include <stdio.h>                          // for printf()
-#include <stdlib.h>                         // for atoi()
+#include <stdlib.h>                         // for atoi() and rand()
 #include <unistd.h>                         // for sleep()
 #include <semaphore.h>                      // to use semaphores and mutexes
 #include <pthread.h>                        // to make pthreads
@@ -19,15 +19,17 @@
 // prototypes
 void print_command_line_args(int arg, char *argv[]);
 void init_globals();
+void *produce_item(void *params);
+void *consume_item(void *params);
 void *hello_producer(void *params);
 void *hello_consumer(void *params);
 
 // global variabes
 pthread_mutex_t mutex;              // define a mutex
-sem_t empty;                        // define an empty semaphore
-sem_t full;                         // define a full semaphore
-sem_t count;                        // define a counting semaphore
+sem_t empty;                        // counts the amount of empty slots
+sem_t full;                         // counts the amount of full slots
 buffer_item buffer[BUFFER_SIZE];    // define the shared buffer 
+bool simulation_flag = true;        // to signal if the simulation is still running or not
 
 int main(int argc, char *argv[]) {
     /*
@@ -55,7 +57,7 @@ int main(int argc, char *argv[]) {
 
     // create the producer threads
     for(int i = 0; i < num_producer_threads; i++) {
-        pthread_create(&producers[i], &default_attrs, hello_producer, NULL);
+        pthread_create(&producers[i], &default_attrs, produce_item, NULL);
     }
 
     // crete the consumer threads
@@ -65,6 +67,7 @@ int main(int argc, char *argv[]) {
 
     // make the main thread sleep for the simulation duration 
     sleep(main_sleep_time);
+    simulation_flag = false;
 
     // join the producer threads
     for(int i = 0; i < num_producer_threads; i++) {
@@ -145,3 +148,37 @@ void *hello_consumer(void *params) {
     pthread_exit(0);
 
 } // end hello_consumer
+
+void *produce_item(void *params) {
+    /*
+        produce_item:
+        This is the function producer threads will run.
+        It will:
+            1. produce a random integer 
+            2. wait for the empty semaphore
+            3. wait for the mutex lock
+            4. add the item to the buffer
+            5. release the mutex lock
+            6. signal the full mutex
+
+        params:
+            params: *void - the thread parameters. None
+    */
+    
+    // to control the maximum and minimum random values
+    int max = 100;
+    int min = 1;
+
+    // get the thread id
+    pthread_t id = pthread_self();
+    
+    // infite loop for the duration of the 
+    // simulation
+    do {
+        // produce a random int from [1-100]
+        buffer_item item = (rand() % max) + min;
+
+        printf("Producer %ld produces %d\n", id, item);
+    } while(simulation_flag);
+
+}
