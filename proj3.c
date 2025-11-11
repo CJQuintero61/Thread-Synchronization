@@ -23,6 +23,7 @@ void init_globals();
 void *produce_item(void *params);
 void *consume_item(void *params);
 void *do_nothing(void *params);
+void print_buffer();
 
 // global variabes
 pthread_mutex_t mutex;              // define a mutex
@@ -194,4 +195,10 @@ bool buffer_insert_item(buffer_item item) {
 
 void *do_nothing(void *params) {
     ;
+}
+
+void print_buffer() {
+    for(int i = 0; i < BUFFER_SIZE; i++) {
+        printf("[%d]: \t %d \n", i, buffer[i]);
+    }
 }
