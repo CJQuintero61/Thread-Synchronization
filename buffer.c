@@ -29,6 +29,8 @@ int write_index = 0;                // the index that producers will place an it
 int read_index = 0;                 // the index that consumers will remove an item from
 int total_produced = 0;             
 int total_consumed = 0;
+int times_buffer_full = 0;
+int times_buffer_empty = 0;
 bool allow_prints = false;
 
 void buffer_init(bool print_buffer_snapshot) {
@@ -89,6 +91,12 @@ void buffer_insert_item(buffer_item item){
         print_buffer();
     }
 
+    // if the count ever reaches 5, increase the times
+    // the buffer was full
+    if(count == 5) {
+        times_buffer_full++;
+    }
+
     // increment the total produced count
     total_produced++;
 
@@ -130,6 +138,12 @@ void buffer_remove_item() {
         print_buffer();
     }
 
+    // if the count ever reaches 0, increase the times
+    // the buffer was empty
+    if(count == 0) {
+        times_buffer_empty++;
+    }
+
     // increment the total consumed count
     total_consumed++;
 
@@ -153,4 +167,6 @@ void print_buffer() {
 void print_totals() {
     printf("Total items produced:\t%d\n", total_produced);
     printf("Total items consumed:\t%d\n", total_consumed);
+    printf("Times buffer was empty:\t%d\n", times_buffer_empty);
+    printf("Times buffer was full:\t%d\n", times_buffer_full);
 }
