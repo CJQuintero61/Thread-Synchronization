@@ -12,13 +12,14 @@
 
 
     Created by Christian Quintero on 11/03/2025
-    Last Updated on 11/04/2025
+    Last Updated on 11/11/2025
 */
 #include <stdio.h>                          // for printf()
 #include <stdlib.h>                         // for atoi() and rand()
 #include <unistd.h>                         // for sleep()
 #include <semaphore.h>                      // to use semaphores and mutexes
 #include <pthread.h>                        // to make pthreads
+#include <stdbool.h>
 #include "buffer.h"
 
 // prototypes
@@ -40,6 +41,17 @@ int main(int argc, char *argv[]) {
     int max_thread_sleep_time = atoi(argv[2]);         // argv[2] is the max amount of time a thread will sleep before producing/consuming an item
     int num_producer_threads = atoi(argv[3]);          // argv[3] is the number of producer threads
     int num_consumer_threads = atoi(argv[4]);          // argv[4] is the number of consumer threads
+    bool print_buffer_snapshot;
+
+    // check the 5th argument's first character
+    // if it starts with a 'y', then consider the input as "yes" (true)
+    // else, consider the input false
+    if( argv[5][0] == 'y') {
+        print_buffer_snapshot = true;
+    }
+    else {
+        print_buffer_snapshot = false;
+    }
 
 
     // make the the thread arrays 
@@ -55,12 +67,12 @@ int main(int argc, char *argv[]) {
 
     // create the producer threads
     for(int i = 0; i < num_producer_threads; i++) {
-        pthread_create(&producers[i], &default_attrs, run_producer, NULL);
+        pthread_create(&producers[i], &default_attrs, run_producer, print_buffer_snapshot);
     }
 
     // crete the consumer threads
     for(int i = 0; i < num_consumer_threads; i++) {
-        pthread_create(&consumers[i], &default_attrs, run_consumer, NULL);
+        pthread_create(&consumers[i], &default_attrs, run_consumer, print_buffer_snapshot);
     }
 
     // make the main thread sleep for the simulation duration 

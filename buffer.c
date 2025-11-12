@@ -1,7 +1,16 @@
+/*
+    buffer.c
+
+    This file is the implementation file for buffer.h
+
+    Created by Christian Quintero on 11/03/2025
+    Last Updated on 11/11/2025
+*/
 #include <pthread.h>
 #include <semaphore.h>
-#include "buffer.h"
+#include <math.h>
 #include <stdio.h>
+#include "buffer.h"
 
 // the shared buffer
 buffer_item buffer[BUFFER_SIZE];

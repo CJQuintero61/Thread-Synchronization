@@ -12,9 +12,6 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-// imports
-#include <stdbool.h>                    // to use the bool data type
-
 // the size of the buffer
 // the buffer can then hold items from 0 to BUFFER_SIZE - 1
 #define BUFFER_SIZE 5
