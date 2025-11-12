@@ -24,5 +24,6 @@ typedef int buffer_item;
 void buffer_insert_item(buffer_item item);
 void buffer_remove_item();
 void print_buffer();
+void print_totals();
 
 #endif // BUFFER_H

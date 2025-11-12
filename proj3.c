@@ -8,7 +8,10 @@
 
     To run:
     gcc proj3.c buffer.c -lpthread -o proj3
-    ./proj3 3 3 3 3 yes
+    ./proj3 5 1 3 3 yes 
+        This will run the program for 5 seconds with the threads sleeping a 
+        max of 1 second. There will be 3 producers and 3 consumers, and output
+        for each production/consumption will be shown
 
 
     Created by Christian Quintero on 11/03/2025
@@ -29,6 +32,13 @@ void *run_consumer(void *params);
 // track if the simulation is still running or not
 bool simulation_flag = true;
 
+// globals
+int main_sleep_time;              
+int max_thread_sleep_time;  
+int num_producer_threads;
+int num_consumer_threads;     
+bool print_buffer_snapshot;
+
 int main(int argc, char *argv[]) {
     /*
         params:
@@ -37,11 +47,10 @@ int main(int argc, char *argv[]) {
     */
 
     // convert the args to ints
-    int main_sleep_time = atoi(argv[1]);               // argv[1] is the amount of time the main thread sleeps
-    int max_thread_sleep_time = atoi(argv[2]);         // argv[2] is the max amount of time a thread will sleep before producing/consuming an item
-    int num_producer_threads = atoi(argv[3]);          // argv[3] is the number of producer threads
-    int num_consumer_threads = atoi(argv[4]);          // argv[4] is the number of consumer threads
-    bool print_buffer_snapshot;
+    main_sleep_time = atoi(argv[1]);               // argv[1] is the amount of time the main thread sleeps
+    max_thread_sleep_time = atoi(argv[2]);         // argv[2] is the max amount of time a thread will sleep before producing/consuming an item
+    num_producer_threads = atoi(argv[3]);          // argv[3] is the number of producer threads
+    num_consumer_threads = atoi(argv[4]);          // argv[4] is the number of consumer threads
 
     // check the 5th argument's first character
     // if it starts with a 'y', then consider the input as "yes" (true)
@@ -88,7 +97,8 @@ int main(int argc, char *argv[]) {
     for(int i = 0; i < num_consumer_threads; i++) {
         pthread_join(consumers[i], NULL);
     }
-
+    
+    print_totals();
     return 0;
 }
 
@@ -101,7 +111,14 @@ void *run_producer(void *params) {
     // the random item
     int item = -1;
 
+    // the number of items produced by this thread
+    int produce_count = 0;
+
     do {
+        // sleep for a random time from 1 - max_thead_sleep_time
+        // before producing an item
+        sleep((rand() % max_thread_sleep_time) + 1);
+
         // produce an int from 1 - 100
         item = (rand() % 100) + 1;
 
@@ -116,6 +133,10 @@ void *run_producer(void *params) {
 void *run_consumer(void *params) {
 
     do {
+        // sleep for a random time from 1 - max_thead_sleep_time
+        // before consuming an item
+        sleep((rand() % max_thread_sleep_time) + 1);
+        
         // consume an item
         buffer_remove_item();
 

@@ -71,13 +71,13 @@ void buffer_insert_item(buffer_item item){
     // write the item to the buffer
     buffer[write_index] = item;
 
-    print_buffer();
-
     // increment the write_index
     write_index = (write_index + 1) % BUFFER_SIZE;
 
     // increment the count 
     count++;
+
+    print_buffer();
 
     // increment the total produced count
     total_produced++;
@@ -110,13 +110,13 @@ void buffer_remove_item() {
 
     printf("Consumer %ld consumes %d\n", pthread_self(), item);
 
-    print_buffer();
-
     // increment the read index
     read_index = (read_index + 1) % BUFFER_SIZE;
 
     // decrement the count
     count--;
+
+    print_buffer();
 
     // increment the total consumed count
     total_consumed++;
@@ -133,6 +133,12 @@ void print_buffer() {
         print_buffer
         This function prints the current buffer status
     */
+    printf("---Buffers occupied:\t%d---\n", count);
     printf("%d\t%d\t%d\t%d\t%d\n", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4]);
     printf("[0]\t[1]\t[2]\t[3]\t[4]\n\n\n");
+}
+
+void print_totals() {
+    printf("Total items produced:\t%d\n", total_produced);
+    printf("Total items consumed:\t%d\n", total_consumed);
 }
