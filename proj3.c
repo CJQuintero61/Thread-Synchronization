@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     pthread_attr_init(&default_attrs);
 
     // init the mutex and semaphores
-    buffer_init();
+    buffer_init(print_buffer_snapshot);
 
     // create the producer threads
     for(int i = 0; i < num_producer_threads; i++) {

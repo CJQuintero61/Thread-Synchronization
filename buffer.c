@@ -10,6 +10,7 @@
 #include <semaphore.h>
 #include <math.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "buffer.h"
 
 // the shared buffer
@@ -28,13 +29,20 @@ int write_index = 0;                // the index that producers will place an it
 int read_index = 0;                 // the index that consumers will remove an item from
 int total_produced = 0;             
 int total_consumed = 0;
+bool allow_prints = false;
 
-void buffer_init() {
+void buffer_init(bool print_buffer_snapshot) {
     /*
         buffer_init
         This function initializes the mutex, semaphores,
-        and the array items
+        array items, and the allow_prints flag
+
+        params:
+            print_buffer_snapshot: bool - from main, this specifies if a thread should print
+                                            the status of the buffer after it has produced/consumed
     */
+
+    allow_prints = print_buffer_snapshot;
     
     // init the mutex
     pthread_mutex_init(&mutex, NULL);
@@ -77,7 +85,9 @@ void buffer_insert_item(buffer_item item){
     // increment the count 
     count++;
 
-    print_buffer();
+    if(allow_prints) {
+        print_buffer();
+    }
 
     // increment the total produced count
     total_produced++;
@@ -116,7 +126,9 @@ void buffer_remove_item() {
     // decrement the count
     count--;
 
-    print_buffer();
+    if(allow_prints) {
+        print_buffer();
+    }
 
     // increment the total consumed count
     total_consumed++;
