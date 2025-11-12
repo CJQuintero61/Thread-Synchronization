@@ -26,6 +26,8 @@ sem_t full;                          // tracks # of full buffers
 int count = 0;                      // tracks the number of full buffers for printing
 int write_index = 0;                // the index that producers will place an item into
 int read_index = 0;                 // the index that consumers will remove an item from
+int total_produced = 0;             
+int total_consumed = 0;
 
 void buffer_init() {
     /*
@@ -77,6 +79,9 @@ void buffer_insert_item(buffer_item item){
     // increment the count 
     count++;
 
+    // increment the total produced count
+    total_produced++;
+
     // release the mutex
     pthread_mutex_unlock(&mutex);
 
@@ -113,6 +118,9 @@ void buffer_remove_item() {
     // decrement the count
     count--;
 
+    // increment the total consumed count
+    total_consumed++;
+
     // release the mutex
     pthread_mutex_unlock(&mutex);
 
@@ -125,7 +133,6 @@ void print_buffer() {
         print_buffer
         This function prints the current buffer status
     */
-    for(int i = 0; i < BUFFER_SIZE; i++) {
-        printf("[%d]: \t %d\n", i, buffer[i]);
-    }
+    printf("%d\t%d\t%d\t%d\t%d\n", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4]);
+    printf("[0]\t[1]\t[2]\t[3]\t[4]\n\n\n");
 }

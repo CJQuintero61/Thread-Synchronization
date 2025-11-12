@@ -67,12 +67,12 @@ int main(int argc, char *argv[]) {
 
     // create the producer threads
     for(int i = 0; i < num_producer_threads; i++) {
-        pthread_create(&producers[i], &default_attrs, run_producer, print_buffer_snapshot);
+        pthread_create(&producers[i], &default_attrs, run_producer, NULL);
     }
 
     // crete the consumer threads
     for(int i = 0; i < num_consumer_threads; i++) {
-        pthread_create(&consumers[i], &default_attrs, run_consumer, print_buffer_snapshot);
+        pthread_create(&consumers[i], &default_attrs, run_consumer, NULL);
     }
 
     // make the main thread sleep for the simulation duration 
