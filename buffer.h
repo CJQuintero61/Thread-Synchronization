@@ -24,7 +24,8 @@
 typedef int buffer_item;
 
 // prototypes for buffer functions
-bool buffer_insert_item(buffer_item item);
-bool buffer_remove_item();
+void buffer_insert_item(buffer_item item);
+void buffer_remove_item();
+void print_buffer();
 
 #endif // BUFFER_H
