@@ -123,29 +123,34 @@ void buffer_remove_item() {
     // track the item that will be consumed
     int item = buffer[read_index];
 
-    // consume the item
-    buffer[read_index] = -1;
+    // validate that the item that will be consumed is
+    // actually there (not -1)
+    if(item != -1) {
 
-    printf("Consumer %ld consumes %d\n", pthread_self(), item);
+        // consume the item
+        buffer[read_index] = -1;
 
-    // increment the read index
-    read_index = (read_index + 1) % BUFFER_SIZE;
+        printf("Consumer %ld consumes %d\n", pthread_self(), item);
 
-    // decrement the count
-    count--;
+        // increment the read index
+        read_index = (read_index + 1) % BUFFER_SIZE;
 
-    if(allow_prints) {
-        print_buffer();
+        // decrement the count
+        count--;
+
+        if(allow_prints) {
+            print_buffer();
+        }
+
+        // if the count ever reaches 0, increase the times
+        // the buffer was empty
+        if(count == 0) {
+            times_buffer_empty++;
+        }
+
+        // increment the total consumed count
+        total_consumed++;
     }
-
-    // if the count ever reaches 0, increase the times
-    // the buffer was empty
-    if(count == 0) {
-        times_buffer_empty++;
-    }
-
-    // increment the total consumed count
-    total_consumed++;
 
     // release the mutex
     pthread_mutex_unlock(&mutex);
