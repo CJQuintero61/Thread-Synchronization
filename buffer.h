@@ -21,6 +21,7 @@
 typedef int buffer_item;
 
 // prototypes for buffer functions
+void buffer_init(bool print_buffer_snapshot);
 void buffer_insert_item(buffer_item item);
 void buffer_remove_item();
 void print_buffer();
