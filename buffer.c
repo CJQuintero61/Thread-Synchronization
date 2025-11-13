@@ -69,7 +69,7 @@ void buffer_insert_item(buffer_item item){
         params:
             item: buffer_item - the item to place in the buffer
     */
-    
+
     // wait for the empty semaphore
     sem_wait(&empty);
 
@@ -169,4 +169,26 @@ void print_totals() {
     printf("Total items consumed:\t%d\n", total_consumed);
     printf("Times buffer was empty:\t%d\n", times_buffer_empty);
     printf("Times buffer was full:\t%d\n", times_buffer_full);
+    printf("Total items remaining in buffer:\t%d\n", count);
+    printf("Total empty buffers:\t%d\n", (BUFFER_SIZE - count));
+}
+
+void post_threads(int pro, int con) {
+    /*
+        post_threads
+        This function forces all threads to post the semaphores
+        It is done after the simulation flag is set to false
+        to stop threads after the flag is set to false.
+
+        params:
+            pro: int - number of producer threads
+            con: int - number of consumer threads
+    */
+    for(int i = 0; i < pro; i++) {
+        sem_post(&empty);
+    }
+
+    for(int i = 0; i < con; i++) {
+        sem_post(&full);
+    }
 }

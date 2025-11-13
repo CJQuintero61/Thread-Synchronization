@@ -25,5 +25,6 @@ void buffer_insert_item(buffer_item item);
 void buffer_remove_item();
 void print_buffer();
 void print_totals();
+void post_threads(int pro, int con);
 
 #endif // BUFFER_H

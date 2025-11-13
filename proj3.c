@@ -28,6 +28,7 @@
 // prototypes
 void *run_producer(void *params);
 void *run_consumer(void *params);
+void print_main_stats();
 
 // track if the simulation is still running or not
 bool simulation_flag = true;
@@ -88,6 +89,10 @@ int main(int argc, char *argv[]) {
     sleep(main_sleep_time);
     simulation_flag = false;
 
+    // force the threads to post the semaphores after 
+    // the simulation
+    post_threads(num_producer_threads, num_consumer_threads);
+
     // join the producer threads
     for(int i = 0; i < num_producer_threads; i++) {
         pthread_join(producers[i], NULL);
@@ -98,6 +103,7 @@ int main(int argc, char *argv[]) {
         pthread_join(consumers[i], NULL);
     }
     
+    print_main_stats();
     print_totals();
     return 0;
 }
@@ -143,4 +149,17 @@ void *run_consumer(void *params) {
     } while (simulation_flag);
 
     return NULL;
+}
+
+void print_main_stats() {
+    /*
+        Prints the stats that are scope specific to 
+        this file
+    */
+    
+    printf("===============================================\n");
+    printf("Simulation time:\t%d\n", main_sleep_time);
+    printf("Thread sleep time:\t%d\n", max_thread_sleep_time);
+    printf("Producer Threads:\t%d\n", num_producer_threads);
+    printf("Consumer Threads:\t%d\n", num_consumer_threads);
 }
